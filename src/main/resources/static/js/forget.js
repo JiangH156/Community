@@ -8,7 +8,7 @@ function feach() {
     const countDown = setInterval(() => {
         if(count===60){
         $.post(
-            CONTEXT_PATH + "/user/sendCode?p="+Math.random(),
+            CONTEXT_PATH + "/user/forget/code?p="+Math.random(),
             {"email":$("#email").val()},
             function(data) {
                 data = $.parseJSON(data);

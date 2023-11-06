@@ -167,4 +167,70 @@ public class UserService implements CommunityConstant {
     public void logout(String ticket){
         loginTicketMapper.updateStatus(ticket,1);
     }
+
+    public int updateHeader(int userId, String headerUrl){
+        return userMapper.updateHeader(userId,headerUrl);
+    }
+
+    public Map<String,Object> getForgetCode(String email, String code, String password){
+        return null;
+    }
+
+    /**
+     *
+     * @param email
+     * @return
+     */
+    public Map<String, Object> verifyEmail(String email) {
+        Map<String, Object> map = new HashMap<>();
+        // 空值判断
+        if (StringUtils.isBlank(email)){
+            return map;
+        }
+        User user = userMapper.selectByEmail(email);
+        if (user == null){
+            // 邮箱不存在
+            return map;
+        }
+        Context context = new Context();
+        context.setVariable("email", email);
+        String code = CommunityUtil.generateUUID().substring(0,4);
+        context.setVariable("verifyCode", code);
+        String content = templateEngine.process("mail/forget", context);
+        mailClient.sendMail(email,"找回密码", content);
+        map.put("user", user);
+        map.put("code", code);
+        return map;
+    }
+
+    /**
+     * 重置密码
+     * @param email
+     * @param password
+     * @return
+     */
+    public Map<String, Object> resetPassword(String email, String password) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(email)){
+            map.put("emailMsg", "邮箱不能为空!");
+            return map;
+        }
+        if (StringUtils.isBlank(password)){
+            map.put("passwordMsg", "密码不能为空!");
+            return map;
+        }
+
+        User user = userMapper.selectByEmail(email);
+        if(user == null){
+            map.put("emailMsg","该邮箱尚未注册!");
+            return map;
+        }
+
+        // 重置密码
+        password = CommunityUtil.md5(password + user.getSalt());
+        userMapper.updatePassword(user.getId(), password);
+
+        map.put("user", user);
+        return map;
+    }
 }
