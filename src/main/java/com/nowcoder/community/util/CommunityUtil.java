@@ -3,6 +3,7 @@ package com.nowcoder.community.util;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +13,8 @@ import java.util.UUID;
  * @author: JiangH
  * @time: 2023/11/2 10:18
  */
+
+
 public class CommunityUtil {
 
     // 生成随机字符串

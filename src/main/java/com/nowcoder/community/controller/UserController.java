@@ -97,7 +97,7 @@ public class UserController {
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
         fileName = uploadPath + "/" + fileName;
-        // 文件后最
+        // 文件后缀
         String suffix = fileName.substring(fileName.lastIndexOf('.') + 1);
         // 响应图片
         response.setContentType("image/" + suffix);
@@ -147,6 +147,19 @@ public class UserController {
             model.addAttribute("passwordMsg", map.get("passwordMsg"));
             return "/site/forget";
         }
+    }
+
+    @PostMapping("/changePassword")
+    public String changePwd(String oldPassword, String newPassword, String confirmPassword, Model model){
+        User user = hostHolder.getUser();
+        Map<String, Object> map = userService.changePwd(user.getId(), oldPassword, newPassword, confirmPassword);
+        if (!map.isEmpty()){
+            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            model.addAttribute("confirmPasswordMsg", map.get("confirmPasswordMsg"));
+            return "/site/setting";
+        }
+        return "redirect:/logout";
     }
 
 }
